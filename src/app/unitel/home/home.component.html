@@ -1,0 +1,143 @@
+<div class="loading-overlay" *ngIf="isLoading">
+  <mat-spinner class="loading-image"></mat-spinner>
+</div>
+<app-header></app-header>
+<main id="main" class="main">
+  <section class="section">
+    <!-- Filtros -->
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+
+            <div class="filters">
+              <form [formGroup]="formularioFiltro" (ngSubmit)="submiFilterForm()" class="row g-3">
+                <div class="col-md-3">
+                  <label for="startDate" class="form-label">{{ "data_inicial" | translate }}</label>
+                  <input type="date" class="form-control" id="startDate" formControlName="startDate">
+                </div>
+                <div class="col-md-3">
+                  <label for="endDate" class="form-label">{{ "data_final" | translate }}</label>
+                  <input type="date" class="form-control" id="endDate" formControlName="endDate" [readonly]="true">
+                </div>
+                <div class="col-md-3">
+                  <label for="status" class="form-label">{{ "estado" | translate }}</label>
+                  <select class="form-select" id="status" formControlName="status">
+                    <option value="">{{ "todos" | translate }}</option>
+                    <option value="Iniciado">{{ "iniciado" | translate }}</option>
+                    <option value="Pago">{{ "pago" | translate }}</option>
+                    <option value="Informado">{{ "informado" | translate }}</option>
+                    <option value="Cancelado">{{ "cancelado" | translate }}</option>
+                  </select>
+                </div>
+                <div class="col-md-3">
+                  <label for="agentName" class="form-label">{{ "nome_agente" | translate }}</label>
+                  <input type="text" class="form-control" id="agentName" formControlName="agentName" [readonly]="true">
+                </div>
+                <div class="col-md-3">
+                  <input type="text" class="form-control" id="agentNumber" placeholder="Agent Number" formControlName="agentNumber" [readonly]="true">
+                </div>
+                <div class="col-md-3">
+                  <input type="text" class="form-control" id="assistantName" placeholder="Assistant name" formControlName="assistantName" [readonly]="true">
+                </div>
+                <div class="col-md-3">
+                  <button type="submit" class="btn btn-primary btnfilter"><i class="bi bi-search"></i> {{ "filtrar" | translate }}</button>
+                </div>
+              </form>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-9">
+                <h6 class="card-title">
+                  {{ "historico_pagamento" | translate }}
+                </h6>
+              </div>
+              <div class="col-md-3 divnewpayment">
+                <button type="submit" class="btn btn-primary float-right" routerLink="/unitel/newprocess">
+                  <i class="bi bi-plus-circle-fill"></i> {{ "new_apyment" | translate }}
+                </button>
+              </div>
+            </div>
+            <hr style="margin-top: -10px;" />
+            <!-- <div class="table-responsive">  -->
+              <table class="table table-hover datatable">
+                <thead class="thead-dark">
+                  <tr>
+                    <th scope="col">{{ "numero_operacao" | translate }}</th>
+                    <th scope="col">{{ "numero_agente" | translate }}</th>
+                    <th scope="col">{{ "tipo_operacao" | translate }}</th>
+                    <th scope="col">{{ "montante" | translate }}</th>
+                    <th scope="col">{{ "estado" | translate }}</th>
+                    <th scope="col">{{ "accao" | translate }}</th>
+                  </tr>
+                </thead>
+                <tbody *ngIf="dataList.length > 0">
+                  <tr *ngFor="let lists of dataList">
+                    <td>{{lists.number}}</td>
+                    <td>{{lists.agentNumber}}</td>
+                    <td>{{lists.description == 'Deposito' ? ('deposito' | translate) : ('transferencia' | translate) }}</td>
+                    <td>{{lists.amount | currency:'Akz ' }}</td>
+                    <td>{{lists.status}}</td>
+                    <td>
+                      <div class="btn-group" ngbDropdown>
+                        <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" ngbDropdownToggle aria-expanded="false">
+                          {{ "accao" | translate }}
+                        </button>
+                        <div class="dropdown-menu" ngbDropdownMenu>
+                          <a ngbDropdownItem [disabled]="lists.status !== 'INICIADO'" (click)="open(cancelModal, lists.number)">{{ "cancel" | translate }}</a>
+                          <a ngbDropdownItem [disabled]="lists.status !== 'INICIADO' || lists.description !== 'Deposito'" routerLink="/unitel/operacaoprocess/{{lists.number }}">{{ "deposito_" | translate }}</a>
+                          <a ngbDropdownItem [disabled]="lists.status !== 'INICIADO' || lists.description !== 'Transferencia'" (click)="submitTransf(lists.number)">{{ "transferencia_" | translate }}</a>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            <!-- </div>  -->
+              <nav aria-label="Navegação de página exemplo" *ngIf="totalItens > 0">
+                <ul class="pagination justify-content-end">
+                  <li class="page-item" [ngClass]="{disabled: pageNumber === 1}">
+                    <a class="page-link" (click)="previePage(pageNumber);">Previous</a>
+                  </li>
+                  <li class="page-item"><a class="page-link" *ngIf="pageNumber > 1">{{ pageNumber - 1 }}</a></li>
+                  <li class="page-item active"><a class="page-link" href="#">{{ pageNumber }}</a></li>
+                  <li class="page-item"><a class="page-link" *ngIf="totalPages > pageNumber">{{ pageNumber + 1 }}</a></li>
+                  <li class="page-item" [ngClass]="{disabled: totalPages === pageNumber}">
+                    <a class="page-link" (click)="nextPage(pageNumber);">Next</a>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+          </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<ng-template id="modals" #cancelModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">{{ "cancelar_operacao" | translate }} #{{ operationIdToCancel }}</h4>
+    <button type="button" class="btn close" (click)="modal.dismiss('Cross click')">
+      <span>&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form [formGroup]="formularioMotivo" (ngSubmit)="submitCancellationForm()" class="form-horizontal">
+      <div class="form-group">
+        <label for="cancellationReason">{{ "cancelar_motivo" | translate }}</label>
+        <textarea class="form-control" id="cancellationReason" formControlName="motivo" [readonly]="true"></textarea>
+      </div>
+      <br />
+      <button type="submit" class="btn btn-primary float-right"><i class="bi bi-save-fill"></i>&nbsp; {{ "aplicar" | translate }}</button>
+    </form>
+  </div>
+</ng-template>

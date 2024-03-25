@@ -1,0 +1,99 @@
+<div class="loading-overlay" *ngIf="progressBarValue">
+  <span>
+    <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+    Verificando...
+  </span>
+</div>
+<div class="loading-overlay" *ngIf="isLoading">
+  <mat-spinner class="loading-image"></mat-spinner>
+</div>
+<app-header></app-header>
+<main style="margin-top: 20px;">
+  <div class="container">
+    <section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-lg-12 col-md-12 d-flex flex-column align-items-center justify-content-center">
+            <div class="card mb-6">
+              <div class="card-body">
+
+                <div class="pt-4 pb-2" style="text-align: center;">
+                  <img src="assets/img/unitel.png" alt="KEVE-UNITEL" class="rounded-circle unitellogo">
+                  <h5 class="card-title text-center pb-0 fs-4">{{ "new_apyment_unitel" | translate }}</h5>
+                </div>
+
+                <form #form_new_payment="ngForm" [formGroup]="formNewPayment" (ngSubmit)="submitFormNewPagamento()">
+                  <div class="col-12 mb-12" *ngIf="notagent">
+                    <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
+                      <hr />
+                      <h5> {{ "unitel_not_agent" | translate }}&nbsp;&nbsp;<img src="assets/img/cancel.png" alt="Profile" class="rounded-circle" style="width: 25px;"></h5>
+                    </div>
+                  </div>
+                  <div class="col-12 mb-12" *ngIf="agent_name">
+                    <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
+                      <hr />
+                      <h4>{{ agent_name }}</h4>
+                      <h5>
+                        {{ "unitel_agent" | translate }} {{ "verificado" | translate }}
+                        <img src="assets/img/check.png" alt="Profile" class="rounded-circle" style="width: 25px;">
+                      </h5>
+                    </div>
+                  </div>
+
+                  <div class="col-12 mb-3">
+                    <label for="n_agente" class="form-label">{{ "numero_agente" | translate }}</label>
+                    <div class="input-group has-validation">
+                      <input #valor type="text" formControlName="n_agente" class="form-control" id="n_agente" (blur)='on_checkAgente(valor)' required>
+                    </div>
+                  </div>
+
+                  <div>
+                    <div class="col-12 mb-3">
+                      <label for="montante" class="form-label">{{ "montante_pagar" | translate }}</label>
+                      <div class="input-group has-validation">
+                        <input type="text" formControlName="montante" class="form-control" id="montante" required>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-12 mb-3">
+                    <fieldset class="row mb-12">
+                      <legend class="col-form-label col-sm-6 pt-0">{{ "tipo_operacao" | translate }}</legend>
+                      <div class="input-group has-validation">
+                        <div class="col-sm-6 d-flex justify-content-between align-items-center">
+                          <div class="form-check">
+                            <input class="form-check-input" type="radio" formControlName="deposito_transf" id="gridRadios1" value="0" (click)="hiddenAccountNumber()">
+                            <label class="form-check-label" for="gridRadios1">
+                              {{ "deposito" | translate }}
+                            </label>
+                          </div>
+                          <div class="form-check" style="margin-left: 20px;">
+                            <input class="form-check-input" type="radio" formControlName="deposito_transf" id="gridRadios2" value="1" (click)="showAccountNumber()">
+                            <label class="form-check-label" for="gridRadios2">
+                              {{ "transferencia" | translate }}
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                    </fieldset>
+                  </div>
+                  <div class="col-12 mb-3" *ngIf="yes_tranf">
+                    <label for="n_conta" class="form-label">{{ "numero_conta" | translate }}</label>
+                    <div class="input-group has-validation" id="nconta">
+                      <input type="text" formControlName="n_conta" class="form-control" id="n_conta" required>
+                    </div>
+                  </div>
+                  <br />
+                  <div class="text-center">
+                    <button type="button" routerLink="/unitel/home" class="btn btn-secondary"><i class="bi bi-reply-fill icon-middle"></i> {{ "voltar" | translate }}</button>
+                    <button type="submit" class="btn btn-primary btnnext" [disabled]="!form_new_payment.valid" *ngIf="agent_name"><i class="bi bi-check-circle-fill icon-middle"></i> {{ "seguinte" | translate }}</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>

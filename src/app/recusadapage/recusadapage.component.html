@@ -1,0 +1,14 @@
+<div id='card' class="animated fadeIn">
+  <div id='upper-side'>
+    <img src="assets/img/error.png" alt="Error" class="rounded-circle" style="width: 60px;">
+    <br /><br />
+    <h3 id='status'> {{ "operacao_nao_cocluida" | translate }} </h3>
+  </div>
+  <div id='lower-side'>
+    <p id='message'> {{ "lamentamos" | translate }} </p>
+    <hr />
+    <p id='message'> {{ message }} </p>
+    <a routerLink="/unitel/home" id="contBtn">{{ "finalizar" | translate }}</a>
+  </div>
+</div>
+
